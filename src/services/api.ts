@@ -44,6 +44,28 @@ const mockUsers = {
   }
 };
 
+// Mock leave requests
+const mockLeaveRequests: LeaveRequest[] = [
+  {
+    id: '1',
+    type: 'vacation',
+    startDate: '2024-03-15',
+    endDate: '2024-03-20',
+    reason: 'Annual family vacation',
+    status: 'pending',
+    createdAt: '2024-03-10T10:00:00Z'
+  },
+  {
+    id: '2',
+    type: 'sick',
+    startDate: '2024-03-12',
+    endDate: '2024-03-13',
+    reason: 'Not feeling well',
+    status: 'pending',
+    createdAt: '2024-03-11T09:00:00Z'
+  }
+];
+
 // Login
 export const login = async (email: string, password: string): Promise<ApiResponse<{ user: User; token: string }>> => {
   // Mock authentication
@@ -99,13 +121,19 @@ const mockActivities: ActivityItem[] = [
     id: '1',
     type: 'check-in',
     timestamp: new Date().toISOString(),
-    details: 'Checked in for the day'
+    details: 'John Doe checked in for the day'
   },
   {
     id: '2',
     type: 'leave-request',
     timestamp: new Date().toISOString(),
-    details: 'Requested vacation leave'
+    details: 'Jane Smith requested vacation leave'
+  },
+  {
+    id: '3',
+    type: 'leave-approved',
+    timestamp: new Date().toISOString(),
+    details: 'Mike Johnson\'s leave request was approved'
   }
 ];
 
@@ -129,7 +157,7 @@ export const getRecentActivity = async (): Promise<ApiResponse<ActivityItem[]>> 
 export const getLeaveRequests = async (): Promise<ApiResponse<LeaveRequest[]>> => {
   return {
     success: true,
-    data: []
+    data: mockLeaveRequests
   };
 };
 
@@ -140,6 +168,8 @@ export const submitLeaveRequest = async (leaveData: Omit<LeaveRequest, 'id' | 's
     status: 'pending',
     createdAt: new Date().toISOString()
   };
+
+  mockLeaveRequests.push(mockLeaveRequest);
 
   return {
     success: true,
