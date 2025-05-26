@@ -7,7 +7,7 @@ interface ActivityFeedProps {
   activities: ActivityItem[];
 }
 
-const ActivityFeed: React.FC<ActivityFeedProps> = ({ activities }) => {
+const ActivityFeed: React.FC<ActivityFeedProps> = ({ activities = [] }) => {
   const getActivityIcon = (type: ActivityItem['type']) => {
     switch (type) {
       case 'check-in':

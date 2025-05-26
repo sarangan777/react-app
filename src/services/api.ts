@@ -44,6 +44,38 @@ const mockUsers = {
   }
 };
 
+// Mock activities for different users
+const mockUserActivities = {
+  '1': [
+    {
+      id: '1',
+      type: 'check-in',
+      timestamp: new Date().toISOString(),
+      details: 'Admin User checked in for the day'
+    },
+    {
+      id: '2',
+      type: 'leave-approved',
+      timestamp: new Date().toISOString(),
+      details: 'Admin User approved a leave request'
+    }
+  ],
+  '2': [
+    {
+      id: '3',
+      type: 'check-in',
+      timestamp: new Date().toISOString(),
+      details: 'Regular User checked in for the day'
+    },
+    {
+      id: '4',
+      type: 'leave-request',
+      timestamp: new Date().toISOString(),
+      details: 'Regular User requested vacation leave'
+    }
+  ]
+};
+
 // Mock leave requests
 const mockLeaveRequests: LeaveRequest[] = [
   {
@@ -116,40 +148,22 @@ const mockDashboardStats: DashboardStats = {
   totalHours: 360
 };
 
-const mockActivities: ActivityItem[] = [
-  {
-    id: '1',
-    type: 'check-in',
-    timestamp: new Date().toISOString(),
-    details: 'John Doe checked in for the day'
-  },
-  {
-    id: '2',
-    type: 'leave-request',
-    timestamp: new Date().toISOString(),
-    details: 'Jane Smith requested vacation leave'
-  },
-  {
-    id: '3',
-    type: 'leave-approved',
-    timestamp: new Date().toISOString(),
-    details: 'Mike Johnson\'s leave request was approved'
-  }
-];
+// Activity
+export const getRecentActivity = async (): Promise<ApiResponse<ActivityItem[]>> => {
+  const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+  const userActivities = mockUserActivities[currentUser.id as keyof typeof mockUserActivities] || [];
+  
+  return {
+    success: true,
+    data: userActivities
+  };
+};
 
 // Dashboard
 export const getDashboardStats = async (): Promise<ApiResponse<DashboardStats>> => {
   return {
     success: true,
     data: mockDashboardStats
-  };
-};
-
-// Activity
-export const getRecentActivity = async (): Promise<ApiResponse<ActivityItem[]>> => {
-  return {
-    success: true,
-    data: mockActivities
   };
 };
 
