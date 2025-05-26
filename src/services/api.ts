@@ -81,15 +81,9 @@ export const login = async (email: string, password: string): Promise<ApiRespons
 
 // Logout
 export const logout = async (): Promise<void> => {
-  try {
-    await api.post('/logout');
-  } catch (error) {
-    console.error('Logout error:', error);
-  } finally {
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('user');
-    localStorage.removeItem('role');
-  }
+  localStorage.removeItem('authToken');
+  localStorage.removeItem('user');
+  localStorage.removeItem('role');
 };
 
 // Mock data for dashboard
