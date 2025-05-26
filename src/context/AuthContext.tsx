@@ -26,11 +26,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     
     if (storedUser && token) {
       try {
-        setUser(JSON.parse(storedUser));
+        const userData = JSON.parse(storedUser);
+        setUser(userData);
       } catch (error) {
         console.error('Failed to parse stored user:', error);
         localStorage.removeItem('user');
         localStorage.removeItem('authToken');
+        localStorage.removeItem('role');
       }
     }
     
@@ -40,12 +42,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const loginUser = (userData: User, token: string) => {
     localStorage.setItem('user', JSON.stringify(userData));
     localStorage.setItem('authToken', token);
+    localStorage.setItem('role', userData.role);
     setUser(userData);
   };
   
   const logoutUser = () => {
     localStorage.removeItem('user');
     localStorage.removeItem('authToken');
+    localStorage.removeItem('role');
     setUser(null);
   };
   

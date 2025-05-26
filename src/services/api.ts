@@ -18,79 +18,165 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// Mock user data for testing
+const mockUsers = {
+  admin: {
+    id: '1',
+    name: 'Admin User',
+    email: 'admin@mlvisiotrack.com',
+    password: 'admin123',
+    role: 'admin',
+    department: 'Administration',
+    profilePicture: null,
+    bio: 'System Administrator',
+    joinDate: '2024-01-01'
+  },
+  user: {
+    id: '2',
+    name: 'Regular User',
+    email: 'user@mlvisiotrack.com',
+    password: 'user123',
+    role: 'user',
+    department: 'Engineering',
+    profilePicture: null,
+    bio: 'Software Engineer',
+    joinDate: '2024-02-01'
+  }
+};
+
 // Login
 export const login = async (email: string, password: string): Promise<ApiResponse<{ user: User; token: string }>> => {
-  try {
-    const response = await api.post<ApiResponse<{ user: User; token: string }>>('/login', { email, password });
-    return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error) && error.response) {
-      return error.response.data as ApiResponse<{ user: User; token: string }>;
-    }
-    throw error;
+  // Mock authentication
+  const adminUser = mockUsers.admin;
+  const regularUser = mockUsers.user;
+
+  let authenticatedUser = null;
+
+  if (email === adminUser.email && password === adminUser.password) {
+    authenticatedUser = { ...adminUser };
+    delete authenticatedUser.password;
+  } else if (email === regularUser.email && password === regularUser.password) {
+    authenticatedUser = { ...regularUser };
+    delete authenticatedUser.password;
   }
+
+  if (authenticatedUser) {
+    const mockToken = 'mock-jwt-token';
+    localStorage.setItem('role', authenticatedUser.role);
+    return {
+      success: true,
+      data: {
+        user: authenticatedUser,
+        token: mockToken
+      }
+    };
+  }
+
+  return {
+    success: false,
+    data: null,
+    message: 'Invalid email or password'
+  };
 };
 
 // Logout
 export const logout = async (): Promise<void> => {
   try {
     await api.post('/logout');
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('user');
   } catch (error) {
     console.error('Logout error:', error);
-    // Still remove local storage items even if API call fails
+  } finally {
     localStorage.removeItem('authToken');
     localStorage.removeItem('user');
+    localStorage.removeItem('role');
   }
 };
 
+// Mock data for dashboard
+const mockDashboardStats: DashboardStats = {
+  present: 45,
+  absent: 5,
+  leave: 3,
+  totalHours: 360
+};
+
+const mockActivities: ActivityItem[] = [
+  {
+    id: '1',
+    type: 'check-in',
+    timestamp: new Date().toISOString(),
+    details: 'Checked in for the day'
+  },
+  {
+    id: '2',
+    type: 'leave-request',
+    timestamp: new Date().toISOString(),
+    details: 'Requested vacation leave'
+  }
+];
+
 // Dashboard
 export const getDashboardStats = async (): Promise<ApiResponse<DashboardStats>> => {
-  const response = await api.get<ApiResponse<DashboardStats>>('/dashboard');
-  return response.data;
+  return {
+    success: true,
+    data: mockDashboardStats
+  };
 };
 
 // Activity
 export const getRecentActivity = async (): Promise<ApiResponse<ActivityItem[]>> => {
-  const response = await api.get<ApiResponse<ActivityItem[]>>('/activity');
-  return response.data;
+  return {
+    success: true,
+    data: mockActivities
+  };
 };
 
 // Leave Requests
 export const getLeaveRequests = async (): Promise<ApiResponse<LeaveRequest[]>> => {
-  const response = await api.get<ApiResponse<LeaveRequest[]>>('/leaves');
-  return response.data;
+  return {
+    success: true,
+    data: []
+  };
 };
 
 export const submitLeaveRequest = async (leaveData: Omit<LeaveRequest, 'id' | 'status' | 'createdAt'>): Promise<ApiResponse<LeaveRequest>> => {
-  const response = await api.post<ApiResponse<LeaveRequest>>('/leave', leaveData);
-  return response.data;
+  const mockLeaveRequest: LeaveRequest = {
+    id: Math.random().toString(),
+    ...leaveData,
+    status: 'pending',
+    createdAt: new Date().toISOString()
+  };
+
+  return {
+    success: true,
+    data: mockLeaveRequest
+  };
 };
 
 // Profile
 export const getUserProfile = async (): Promise<ApiResponse<User>> => {
-  const response = await api.get<ApiResponse<User>>('/profile');
-  return response.data;
+  const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+  return {
+    success: true,
+    data: currentUser
+  };
 };
 
 export const updateUserProfile = async (profileData: Partial<User>): Promise<ApiResponse<User>> => {
-  const response = await api.post<ApiResponse<User>>('/profile', profileData);
-  return response.data;
+  const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+  const updatedUser = { ...currentUser, ...profileData };
+  
+  return {
+    success: true,
+    data: updatedUser
+  };
 };
 
-// Upload profile picture
 export const uploadProfilePicture = async (file: File): Promise<ApiResponse<{ url: string }>> => {
-  const formData = new FormData();
-  formData.append('profilePicture', file);
-  
-  const response = await api.post<ApiResponse<{ url: string }>>('/profile/upload', formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  });
-  
-  return response.data;
+  return {
+    success: true,
+    data: { url: URL.createObjectURL(file) }
+  };
 };
 
 export default api;
