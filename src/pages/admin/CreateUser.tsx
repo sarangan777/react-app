@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { UserPlus } from 'lucide-react';
+import { UserPlus, Upload } from 'lucide-react';
 import TopHeader from '../../components/TopHeader';
 import Sidebar from '../../components/Sidebar';
 
@@ -10,35 +10,117 @@ const CreateUser = () => {
     email: '',
     role: 'user',
     department: '',
-    position: ''
+    position: '',
+    password: '',
+    confirmPassword: '',
+    profilePicture: null as File | null
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle user creation logic here
+    setError(null);
+    setSuccess(null);
+
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords don't match");
+      return;
+    }
+
+    // Here you would typically make an API call to create the user
+    try {
+      // Mock success for now
+      setSuccess('User created successfully!');
+      setFormData({
+        firstName: '',
+        lastName: '',
+        email: '',
+        role: 'user',
+        department: '',
+        position: '',
+        password: '',
+        confirmPassword: '',
+        profilePicture: null
+      });
+      setPreviewUrl(null);
+    } catch (err) {
+      setError('Failed to create user. Please try again.');
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+    const { name, value, type } = e.target;
+    
+    if (type === 'file') {
+      const fileInput = e.target as HTMLInputElement;
+      const file = fileInput.files?.[0];
+      
+      if (file) {
+        setFormData(prev => ({ ...prev, profilePicture: file }));
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setPreviewUrl(reader.result as string);
+        };
+        reader.readAsDataURL(file);
+      }
+    } else {
+      setFormData(prev => ({ ...prev, [name]: value }));
+    }
   };
 
   return (
     <div className="flex h-screen bg-gray-50">
-      <Sidebar />
+      <Sidebar isMobile={false} />
       <div className="flex-1 flex flex-col overflow-hidden">
-        <TopHeader title="Create New User" />
+        <TopHeader sidebarOpen={true} />
         
         <main className="flex-1 overflow-y-auto p-6">
-          <div className="max-w-2xl mx-auto bg-white rounded-lg shadow p-6">
+          <div className="max-w-3xl mx-auto bg-white rounded-lg shadow p-6">
             <div className="flex items-center mb-6">
               <UserPlus className="w-6 h-6 text-blue-600 mr-2" />
-              <h2 className="text-xl font-semibold text-gray-800">New User Details</h2>
+              <h2 className="text-xl font-semibold text-gray-800">Create New User</h2>
             </div>
 
+            {error && (
+              <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg">
+                {error}
+              </div>
+            )}
+
+            {success && (
+              <div className="mb-4 p-3 bg-green-100 text-green-700 rounded-lg">
+                {success}
+              </div>
+            )}
+
             <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="flex justify-center mb-6">
+                <div className="relative">
+                  <div className="w-32 h-32 rounded-full border-4 border-gray-200 overflow-hidden">
+                    {previewUrl ? (
+                      <img src={previewUrl} alt="Profile preview" className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full bg-gray-100 flex items-center justify-center">
+                        <Upload className="w-8 h-8 text-gray-400" />
+                      </div>
+                    )}
+                  </div>
+                  <label className="absolute bottom-0 right-0 bg-blue-600 text-white p-2 rounded-full cursor-pointer hover:bg-blue-700">
+                    <Upload size={16} />
+                    <input
+                      type="file"
+                      className="hidden"
+                      accept="image/*"
+                      onChange={handleChange}
+                      name="profilePicture"
+                    />
+                  </label>
+                </div>
+              </div>
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -49,7 +131,7 @@ const CreateUser = () => {
                     name="firstName"
                     value={formData.firstName}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                     required
                   />
                 </div>
@@ -63,7 +145,7 @@ const CreateUser = () => {
                     name="lastName"
                     value={formData.lastName}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                     required
                   />
                 </div>
@@ -77,7 +159,7 @@ const CreateUser = () => {
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                     required
                   />
                 </div>
@@ -90,7 +172,7 @@ const CreateUser = () => {
                     name="role"
                     value={formData.role}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                     required
                   >
                     <option value="user">User</option>
@@ -107,7 +189,7 @@ const CreateUser = () => {
                     name="department"
                     value={formData.department}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                     required
                   />
                 </div>
@@ -121,7 +203,35 @@ const CreateUser = () => {
                     name="position"
                     value={formData.position}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Password
+                  </label>
+                  <input
+                    type="password"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Confirm Password
+                  </label>
+                  <input
+                    type="password"
+                    name="confirmPassword"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                     required
                   />
                 </div>
@@ -130,7 +240,7 @@ const CreateUser = () => {
               <div className="flex justify-end">
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                  className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 >
                   Create User
                 </button>
