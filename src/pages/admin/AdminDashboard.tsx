@@ -52,7 +52,7 @@ const AdminDashboard = () => {
 
           <div className="bg-white rounded-lg shadow p-6">
             <h2 className="text-lg font-semibold text-gray-800 mb-4">Recent Activity</h2>
-            <ActivityFeed />
+            <ActivityFeed activities={[]} />
           </div>
         </main>
       </div>
