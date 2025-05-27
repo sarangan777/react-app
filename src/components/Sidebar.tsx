@@ -64,7 +64,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobile, isOpen, onToggle }) => {
       >
         <div className="flex flex-col h-full">
           <div className="flex items-center justify-center h-20 border-b px-6">
-            <h1 className="text-xl font-bold text-[#7494ec] whitespace-nowrap">MLVisioTrack</h1>
+            <h1 className="text-xl font-bold text-[#7494ec] whitespace-nowrap">Smart Attendance</h1>
           </div>
 
           <div className="flex-1 overflow-y-auto py-4">
