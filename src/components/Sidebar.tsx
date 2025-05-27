@@ -106,7 +106,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobile, isOpen, onToggle }) => {
           onClick={onToggle}
         />
       )}
-    </div>
+    </>
   );
 };
 
