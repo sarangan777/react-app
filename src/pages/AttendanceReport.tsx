@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { Download, Filter } from 'lucide-react';
 import { format } from 'date-fns';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
+import Papa from 'papaparse';
 
 interface AttendanceRecord {
   date: string;
@@ -13,6 +16,7 @@ interface AttendanceRecord {
 const AttendanceReport: React.FC = () => {
   const [selectedDateRange, setSelectedDateRange] = useState<string>('current');
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
+  const [isExporting, setIsExporting] = useState(false);
 
   const mockAttendance: AttendanceRecord[] = [
     {
@@ -22,17 +26,72 @@ const AttendanceReport: React.FC = () => {
       status: 'present',
       duration: '7.5'
     },
-    // Add more attendance records
+    {
+      date: '2024-03-12',
+      checkIn: '09:00',
+      checkOut: '17:00',
+      status: 'present',
+      duration: '8.0'
+    },
+    {
+      date: '2024-03-13',
+      checkIn: '-',
+      checkOut: '-',
+      status: 'absent',
+      duration: '0'
+    }
   ];
 
-  const handleExportPDF = () => {
-    // Implement PDF export logic
-    console.log('Exporting PDF...');
+  const handleExportPDF = async () => {
+    try {
+      setIsExporting(true);
+      const element = document.getElementById('attendance-table');
+      if (!element) return;
+
+      const canvas = await html2canvas(element);
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF({
+        orientation: 'landscape',
+        unit: 'px',
+        format: [canvas.width, canvas.height]
+      });
+
+      pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
+      pdf.save('attendance-report.pdf');
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+    } finally {
+      setIsExporting(false);
+    }
   };
 
   const handleExportCSV = () => {
-    // Implement CSV export logic
-    console.log('Exporting CSV...');
+    try {
+      setIsExporting(true);
+      const csvData = mockAttendance.map(record => ({
+        Date: format(new Date(record.date), 'MMM dd, yyyy'),
+        'Check In': record.checkIn,
+        'Check Out': record.checkOut,
+        Status: record.status.charAt(0).toUpperCase() + record.status.slice(1),
+        'Duration (hrs)': record.duration
+      }));
+
+      const csv = Papa.unparse(csvData);
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      
+      link.setAttribute('href', url);
+      link.setAttribute('download', `attendance-report-${format(new Date(), 'yyyy-MM-dd')}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error('Error generating CSV:', error);
+    } finally {
+      setIsExporting(false);
+    }
   };
 
   return (
@@ -63,14 +122,16 @@ const AttendanceReport: React.FC = () => {
             <div className="flex space-x-2">
               <button
                 onClick={handleExportPDF}
-                className="px-4 py-2 bg-[#7494ec] text-white rounded-lg hover:bg-[#5b7cde] text-sm flex items-center"
+                disabled={isExporting}
+                className="px-4 py-2 bg-[#7494ec] text-white rounded-lg hover:bg-[#5b7cde] text-sm flex items-center disabled:opacity-50"
               >
                 <Download className="w-4 h-4 mr-2" />
                 Export PDF
               </button>
               <button
                 onClick={handleExportCSV}
-                className="px-4 py-2 border border-[#7494ec] text-[#7494ec] rounded-lg hover:bg-gray-50 text-sm flex items-center"
+                disabled={isExporting}
+                className="px-4 py-2 border border-[#7494ec] text-[#7494ec] rounded-lg hover:bg-gray-50 text-sm flex items-center disabled:opacity-50"
               >
                 <Download className="w-4 h-4 mr-2" />
                 Export CSV
@@ -79,7 +140,7 @@ const AttendanceReport: React.FC = () => {
           </div>
         </div>
 
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto" id="attendance-table">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
