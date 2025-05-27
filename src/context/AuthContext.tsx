@@ -1,74 +1,38 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { User } from '../types';
-
-interface AuthContextType {
-  user: User | null;
-  isAuthenticated: boolean;
-  isLoading: boolean;
-  login: (user: User, token: string) => void;
-  logout: () => void;
-}
+import React, { createContext, useContext, useState } from 'react';
+import { User, AuthContextType } from '../types';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-interface AuthProviderProps {
-  children: ReactNode;
-}
-
-export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  
-  useEffect(() => {
-    // Check if user is already logged in
-    const storedUser = localStorage.getItem('user');
-    const token = localStorage.getItem('authToken');
-    
-    if (storedUser && token) {
-      try {
-        const userData = JSON.parse(storedUser);
-        setUser(userData);
-      } catch (error) {
-        console.error('Failed to parse stored user:', error);
-        localStorage.removeItem('user');
-        localStorage.removeItem('authToken');
-        localStorage.removeItem('role');
-      }
-    }
-    
-    setIsLoading(false);
-  }, []);
-  
-  const loginUser = (userData: User, token: string) => {
-    localStorage.setItem('user', JSON.stringify(userData));
-    localStorage.setItem('authToken', token);
-    localStorage.setItem('role', userData.role);
-    setUser(userData);
+
+  const signIn = async (email: string, password: string) => {
+    // Implement your authentication logic here
+    const mockUser = {
+      id: '1',
+      name: 'Test User',
+      email: email,
+      role: 'user'
+    };
+    setUser(mockUser);
+    localStorage.setItem('user', JSON.stringify(mockUser));
+    localStorage.setItem('role', mockUser.role);
   };
-  
-  const logoutUser = () => {
-    localStorage.removeItem('user');
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('role');
+
+  const signOut = () => {
     setUser(null);
+    localStorage.removeItem('user');
+    localStorage.removeItem('role');
   };
-  
+
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        isAuthenticated: !!user,
-        isLoading,
-        login: loginUser,
-        logout: logoutUser,
-      }}
-    >
+    <AuthContext.Provider value={{ user, signIn, signOut }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-export const useAuth = (): AuthContextType => {
+export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
     throw new Error('useAuth must be used within an AuthProvider');
