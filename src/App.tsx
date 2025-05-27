@@ -9,7 +9,6 @@ import AttendanceReport from './pages/AttendanceReport';
 import Profile from './pages/Profile';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminSchedule from './pages/admin/AdminSchedule';
-import AdminProfile from './pages/admin/AdminProfile';
 import AttendanceReview from './pages/admin/AttendanceReview';
 
 function App() {
@@ -32,7 +31,6 @@ function App() {
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/admin/schedule" element={<AdminSchedule />} />
             <Route path="/admin/attendance" element={<AttendanceReview />} />
-            <Route path="/admin/profile" element={<AdminProfile />} />
           </Route>
           
           {/* Redirect based on role */}
