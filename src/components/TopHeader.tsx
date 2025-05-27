@@ -23,22 +23,22 @@ const TopHeader: React.FC<TopHeaderProps> = ({ sidebarOpen, onToggleSidebar }) =
   return (
     <header className={`fixed top-0 right-0 z-30 h-20 bg-white shadow-sm transition-all duration-300 ease-in-out ${
       sidebarOpen ? 'md:left-64' : 'left-0'
-    } left-0 flex items-center px-6`}>
-      <button
-        className="md:hidden mr-4 p-2 rounded-lg hover:bg-gray-100"
-        onClick={onToggleSidebar}
-      >
-        <Menu size={24} />
-      </button>
-      
-      <div className="flex-1">
+    } left-0 flex items-center`}>
+      <div className="flex-1 px-6 flex items-center">
+        <button
+          className="md:hidden mr-4 p-2 rounded-lg hover:bg-gray-100"
+          onClick={onToggleSidebar}
+        >
+          <Menu size={24} />
+        </button>
+        
         <div className="flex flex-col">
           <h2 className="text-2xl font-semibold text-gray-800">Welcome, {firstName}</h2>
           <p className="text-sm text-gray-500">{formattedDate}</p>
         </div>
       </div>
       
-      <div className="flex items-center space-x-4">
+      <div className="flex items-center space-x-4 px-6">
         <div className="relative">
           <button className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200 relative">
             <Bell size={22} />
