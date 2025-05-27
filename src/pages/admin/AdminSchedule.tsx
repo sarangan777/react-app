@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Calendar, Download, Plus, Edit2, Trash2 } from 'lucide-react';
 import { Dialog } from '@headlessui/react';
+import { format, parseISO } from 'date-fns';
 import BackButton from '../../components/BackButton';
 
 interface Schedule {
@@ -11,12 +12,14 @@ interface Schedule {
   endTime: string;
   day: string;
   room: string;
+  date: string;
 }
 
 const AdminSchedule = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [schedules, setSchedules] = useState<Schedule[]>([]);
   const [editingSchedule, setEditingSchedule] = useState<Schedule | null>(null);
+  const [selectedDate, setSelectedDate] = useState(format(new Date(), 'yyyy-MM-dd'));
   
   const weekDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
   const timeSlots = Array.from({ length: 12 }, (_, i) => {
@@ -54,8 +57,8 @@ const AdminSchedule = () => {
 
   const exportSchedule = () => {
     const csv = [
-      ['Course', 'Lecturer', 'Day', 'Start Time', 'End Time', 'Room'],
-      ...schedules.map(s => [s.course, s.lecturer, s.day, s.startTime, s.endTime, s.room])
+      ['Course', 'Lecturer', 'Day', 'Date', 'Start Time', 'End Time', 'Room'],
+      ...schedules.map(s => [s.course, s.lecturer, s.day, s.date, s.startTime, s.endTime, s.room])
     ].map(row => row.join(',')).join('\n');
 
     const blob = new Blob([csv], { type: 'text/csv' });
@@ -79,6 +82,12 @@ const AdminSchedule = () => {
               <h2 className="text-xl font-semibold text-gray-800">Course Schedule</h2>
             </div>
             <div className="flex space-x-3">
+              <input
+                type="date"
+                value={selectedDate}
+                onChange={(e) => setSelectedDate(e.target.value)}
+                className="px-4 py-2 border border-gray-300 rounded-lg"
+              />
               <button
                 onClick={() => setIsModalOpen(true)}
                 className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center"
@@ -116,7 +125,7 @@ const AdminSchedule = () => {
                     </td>
                     {weekDays.map(day => {
                       const schedule = schedules.find(
-                        s => s.day === day && s.startTime <= time && s.endTime > time
+                        s => s.day === day && s.startTime <= time && s.endTime > time && s.date === selectedDate
                       );
                       
                       return (
@@ -179,6 +188,7 @@ const AdminSchedule = () => {
                 startTime: formData.get('startTime') as string,
                 endTime: formData.get('endTime') as string,
                 room: formData.get('room') as string,
+                date: formData.get('date') as string,
               };
 
               if (editingSchedule) {
@@ -188,6 +198,19 @@ const AdminSchedule = () => {
               }
             }}>
               <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Date
+                  </label>
+                  <input
+                    type="date"
+                    name="date"
+                    defaultValue={editingSchedule?.date || selectedDate}
+                    className="w-full p-2 border rounded-lg"
+                    required
+                  />
+                </div>
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Course

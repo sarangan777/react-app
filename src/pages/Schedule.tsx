@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Calendar, Download } from 'lucide-react';
+import { format } from 'date-fns';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import BackButton from '../components/BackButton';
@@ -12,10 +13,11 @@ interface ClassSchedule {
   endTime: string;
   day: string;
   room: string;
+  date: string;
 }
 
 const Schedule: React.FC = () => {
-  const [currentDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(format(new Date(), 'yyyy-MM-dd'));
   const [view] = useState<'week' | 'month'>('week');
   const scheduleRef = useRef<HTMLDivElement>(null);
 
@@ -28,7 +30,8 @@ const Schedule: React.FC = () => {
       startTime: '09:00',
       endTime: '10:30',
       day: 'Monday',
-      room: 'Lab 01'
+      room: 'Lab 01',
+      date: format(new Date(), 'yyyy-MM-dd')
     },
     {
       id: '2',
@@ -37,7 +40,8 @@ const Schedule: React.FC = () => {
       startTime: '11:00',
       endTime: '12:30',
       day: 'Monday',
-      room: 'Lab 02'
+      room: 'Lab 02',
+      date: format(new Date(), 'yyyy-MM-dd')
     },
   ];
 
@@ -52,7 +56,8 @@ const Schedule: React.FC = () => {
     return mockSchedule.filter(cls => 
       cls.day === day && 
       cls.startTime <= time && 
-      cls.endTime > time
+      cls.endTime > time &&
+      cls.date === selectedDate
     );
   };
 
@@ -94,6 +99,12 @@ const Schedule: React.FC = () => {
             Class Schedule
           </h2>
           <div className="flex space-x-3">
+            <input
+              type="date"
+              value={selectedDate}
+              onChange={(e) => setSelectedDate(e.target.value)}
+              className="px-4 py-2 border border-gray-300 rounded-lg"
+            />
             <button
               onClick={handleExportPDF}
               className="px-4 py-2 text-sm bg-[#7494ec] text-white rounded-lg hover:bg-[#5b7cde] flex items-center"
