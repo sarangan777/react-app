@@ -26,13 +26,13 @@ const TopHeader: React.FC<TopHeaderProps> = ({ sidebarOpen, onToggleSidebar }) =
     } left-0 flex items-center`}>
       <div className="flex-1 px-6 flex items-center">
         <button
-          className="p-2 rounded-lg hover:bg-gray-100 md:hidden"
+          className={`p-2 rounded-lg hover:bg-gray-100 ${sidebarOpen ? 'md:hidden' : ''}`}
           onClick={onToggleSidebar}
         >
           <Menu size={24} />
         </button>
         
-        <div className="flex flex-col ml-12 md:ml-0">
+        <div className="flex flex-col ml-6">
           <h2 className="text-2xl font-semibold text-gray-800">Welcome, {firstName}</h2>
           <p className="text-sm text-gray-500">{formattedDate}</p>
         </div>
