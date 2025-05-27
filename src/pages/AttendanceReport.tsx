@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Download, Filter } from 'lucide-react';
 import { format } from 'date-fns';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import Papa from 'papaparse';
+import BackButton from '../components/BackButton';
 
 interface AttendanceRecord {
   date: string;
@@ -96,6 +97,9 @@ const AttendanceReport: React.FC = () => {
 
   return (
     <div className="p-6 md:p-8">
+      <div className="mb-4">
+        <BackButton />
+      </div>
       <div className="bg-white rounded-xl shadow-sm p-6">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-xl font-semibold">Attendance Report</h2>

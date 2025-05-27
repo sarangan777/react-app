@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Clock, Search, Download } from 'lucide-react';
 import { unparse } from 'papaparse';
+import BackButton from '../../components/BackButton';
 
 const AttendanceReview = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -51,6 +52,9 @@ const AttendanceReview = () => {
 
   return (
     <div className="p-6">
+      <div className="mb-4">
+        <BackButton />
+      </div>
       <div className="bg-white rounded-lg shadow">
         <div className="p-6 border-b border-gray-200">
           <div className="flex items-center justify-between mb-4">
