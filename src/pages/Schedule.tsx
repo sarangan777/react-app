@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar, Download, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Calendar, Download } from 'lucide-react';
 
 interface ClassSchedule {
   id: string;
@@ -8,11 +8,12 @@ interface ClassSchedule {
   startTime: string;
   endTime: string;
   day: string;
+  room: string;
 }
 
 const Schedule: React.FC = () => {
-  const [currentDate, setCurrentDate] = useState(new Date());
-  const [view, setView] = useState<'week' | 'month'>('week');
+  const [currentDate] = useState(new Date());
+  const [view] = useState<'week' | 'month'>('week');
 
   // Mock data - replace with actual API calls
   const mockSchedule: ClassSchedule[] = [
@@ -22,7 +23,8 @@ const Schedule: React.FC = () => {
       instructor: 'Dr. Smith',
       startTime: '09:00',
       endTime: '10:30',
-      day: 'Monday'
+      day: 'Monday',
+      room: 'Lab 01'
     },
     {
       id: '2',
@@ -30,9 +32,9 @@ const Schedule: React.FC = () => {
       instructor: 'Prof. Johnson',
       startTime: '11:00',
       endTime: '12:30',
-      day: 'Monday'
+      day: 'Monday',
+      room: 'Lab 02'
     },
-    // Add more schedule items
   ];
 
   const timeSlots = Array.from({ length: 12 }, (_, i) => {
@@ -40,7 +42,7 @@ const Schedule: React.FC = () => {
     return `${hour.toString().padStart(2, '0')}:00`;
   });
 
-  const weekDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+  const weekDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
   const getClassesForDayAndTime = (day: string, time: string) => {
     return mockSchedule.filter(cls => 
@@ -71,12 +73,6 @@ const Schedule: React.FC = () => {
             Class Schedule
           </h2>
           <div className="flex space-x-3">
-            <button
-              onClick={() => setView(view === 'week' ? 'month' : 'week')}
-              className="px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50"
-            >
-              {view === 'week' ? 'Month View' : 'Week View'}
-            </button>
             <button
               onClick={handleExportPDF}
               className="px-4 py-2 text-sm bg-[#7494ec] text-white rounded-lg hover:bg-[#5b7cde] flex items-center"
@@ -123,6 +119,7 @@ const Schedule: React.FC = () => {
                           >
                             <div className="font-medium">{cls.subject}</div>
                             <div className="text-xs opacity-90">{cls.instructor}</div>
+                            <div className="text-xs opacity-90">Room: {cls.room}</div>
                           </div>
                         ))}
                       </td>
