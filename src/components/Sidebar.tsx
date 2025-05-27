@@ -40,7 +40,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobile, isOpen, onToggle }) => {
   const userLinks = [
     { to: '/dashboard', icon: <LayoutDashboard size={20} />, text: 'Dashboard' },
     { to: '/schedule', icon: <Clock size={20} />, text: 'Schedule' },
-    { to: '/leave', icon: <Calendar size={20} />, text: 'Leave Requests' },
     { to: '/profile', icon: <User size={20} />, text: 'Profile' },
   ];
 

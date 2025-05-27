@@ -190,9 +190,6 @@ const Dashboard: React.FC = () => {
           <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
             <h3 className="text-lg font-semibold mb-4">Quick Actions</h3>
             <div className="space-y-3">
-              <button className="w-full py-2 px-4 bg-[#7494ec] text-white rounded-lg hover:bg-[#5b7cde] transition-colors">
-                Request Leave
-              </button>
               <button className="w-full py-2 px-4 border border-[#7494ec] text-[#7494ec] rounded-lg hover:bg-gray-50 transition-colors">
                 View Schedule
               </button>
