@@ -11,7 +11,7 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({ allowedRoles }) => {
   
   if (!user) {
     // Not logged in, redirect to login page
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/login\" replace />;
   }
 
   if (!allowedRoles.includes(user.role)) {
