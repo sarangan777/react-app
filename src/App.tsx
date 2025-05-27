@@ -4,6 +4,7 @@ import { AuthProvider } from './context/AuthContext';
 import PrivateRoute from './routes/PrivateRoute';
 import LoginPage from './pages/LoginPage';
 import Dashboard from './pages/Dashboard';
+import Schedule from './pages/Schedule';
 import LeaveRequest from './pages/LeaveRequest';
 import Profile from './pages/Profile';
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -22,6 +23,7 @@ function App() {
           {/* Protected User Routes */}
           <Route element={<PrivateRoute allowedRoles={['user']} />}>
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/schedule" element={<Schedule />} />
             <Route path="/leave" element={<LeaveRequest />} />
             <Route path="/profile" element={<Profile />} />
           </Route>
