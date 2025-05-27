@@ -17,7 +17,6 @@ import Sidebar from '../../components/Sidebar';
 import StatCard from '../../components/StatCard';
 import * as apiService from '../../services/api';
 
-// Register ChartJS components
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -37,9 +36,20 @@ const AdminDashboard = () => {
     totalCourses: 0
   });
   const [isLoading, setIsLoading] = useState(true);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [sidebarOpen, setSidebarOpen] = useState(!isMobile);
 
   useEffect(() => {
     fetchDashboardData();
+    
+    const handleResize = () => {
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+      setSidebarOpen(!mobile);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   const fetchDashboardData = async () => {
@@ -61,7 +71,10 @@ const AdminDashboard = () => {
     }
   };
 
-  // Attendance data by department
+  const handleToggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
+
   const departmentData = {
     labels: ['NDIT', 'NDA', 'NDE'],
     datasets: [
@@ -74,7 +87,6 @@ const AdminDashboard = () => {
     ]
   };
 
-  // Course distribution data
   const courseData = {
     labels: ['Morning', 'Evening', 'Weekend'],
     datasets: [
@@ -99,11 +111,13 @@ const AdminDashboard = () => {
 
   return (
     <div className="flex h-screen bg-gray-50">
-      <Sidebar isMobile={false} isOpen={true} onToggle={() => {}} />
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <TopHeader sidebarOpen={true} onToggleSidebar={() => {}} />
+      <Sidebar isMobile={isMobile} isOpen={sidebarOpen} onToggle={handleToggleSidebar} />
+      <div className={`flex-1 flex flex-col overflow-hidden transition-all duration-300 ${
+        sidebarOpen ? 'md:ml-64' : ''
+      }`}>
+        <TopHeader sidebarOpen={sidebarOpen} onToggleSidebar={handleToggleSidebar} />
         
-        <main className="flex-1 overflow-y-auto p-6">
+        <main className="flex-1 overflow-y-auto p-6 pt-20">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <StatCard
               title="Total Students"

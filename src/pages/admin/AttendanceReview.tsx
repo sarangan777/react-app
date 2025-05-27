@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Clock, Search, Download } from 'lucide-react';
 import { unparse } from 'papaparse';
 import TopHeader from '../../components/TopHeader';
@@ -8,6 +8,23 @@ const AttendanceReview = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('');
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [sidebarOpen, setSidebarOpen] = useState(!isMobile);
+
+  useEffect(() => {
+    const handleResize = () => {
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+      setSidebarOpen(!mobile);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const handleToggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
 
   const attendanceRecords = [
     {
@@ -19,7 +36,6 @@ const AttendanceReview = () => {
       status: 'Present',
       totalHours: '8.5'
     },
-    // Add more mock attendance records as needed
   ];
 
   const handleExportCSV = () => {
@@ -54,11 +70,13 @@ const AttendanceReview = () => {
 
   return (
     <div className="flex h-screen bg-gray-50">
-      <Sidebar />
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <TopHeader title="Attendance Review" />
+      <Sidebar isMobile={isMobile} isOpen={sidebarOpen} onToggle={handleToggleSidebar} />
+      <div className={`flex-1 flex flex-col overflow-hidden transition-all duration-300 ${
+        sidebarOpen ? 'md:ml-64' : ''
+      }`}>
+        <TopHeader sidebarOpen={sidebarOpen} onToggleSidebar={handleToggleSidebar} />
         
-        <main className="flex-1 overflow-y-auto p-6">
+        <main className="flex-1 overflow-y-auto p-6 pt-20">
           <div className="bg-white rounded-lg shadow">
             <div className="p-6 border-b border-gray-200">
               <div className="flex items-center justify-between mb-4">
