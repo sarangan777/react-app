@@ -3,6 +3,8 @@ import { Calendar, Download, Plus, Edit2, Trash2 } from 'lucide-react';
 import { Dialog } from '@headlessui/react';
 import { format, parseISO } from 'date-fns';
 import BackButton from '../../components/BackButton';
+import { sendScheduleNotification } from '../../services/notification';
+import { toast } from 'react-toastify';
 
 interface Schedule {
   id: string;
@@ -36,13 +38,24 @@ const AdminSchedule = () => {
     'Mobile Development'
   ];
 
-  const handleAddSchedule = (schedule: Omit<Schedule, 'id'>) => {
-    const newSchedule = {
-      ...schedule,
-      id: Math.random().toString(36).substr(2, 9)
-    };
-    setSchedules([...schedules, newSchedule]);
-    setIsModalOpen(false);
+  const handleAddSchedule = async (schedule: Omit<Schedule, 'id'>) => {
+    try {
+      const newSchedule = {
+        ...schedule,
+        id: Math.random().toString(36).substr(2, 9)
+      };
+      
+      setSchedules([...schedules, newSchedule]);
+      
+      // Send notification to students in the relevant department
+      await sendScheduleNotification(newSchedule, newSchedule.course);
+      toast.success('Schedule added and notifications sent successfully');
+      
+      setIsModalOpen(false);
+    } catch (error) {
+      console.error('Error adding schedule:', error);
+      toast.error('Failed to add schedule or send notifications');
+    }
   };
 
   const handleEditSchedule = (schedule: Schedule) => {
