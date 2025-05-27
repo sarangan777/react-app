@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Calendar, User, LogOut, Menu, X, Users, FileText, Clock } from 'lucide-react';
+import { LayoutDashboard, Calendar, User, LogOut, Menu, X, FileText, Clock } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import * as apiService from '../services/api';
 
@@ -31,9 +31,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobile, isOpen, onToggle }) => {
 
   const adminLinks = [
     { to: '/admin/dashboard', icon: <LayoutDashboard size={20} />, text: 'Dashboard' },
-    { to: '/admin/manage-users', icon: <Users size={20} />, text: 'Manage Users' },
-    { to: '/admin/create-user', icon: <User size={20} />, text: 'Add User' },
-    { to: '/admin/attendance', icon: <FileText size={20} />, text: 'Attendance' },
+    { to: '/admin/schedule', icon: <Calendar size={20} />, text: 'Schedule Manager' },
+    { to: '/admin/attendance', icon: <FileText size={20} />, text: 'Attendance Report' },
+    { to: '/admin/profile', icon: <User size={20} />, text: 'Profile' },
   ];
 
   const userLinks = [
@@ -110,4 +110,4 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobile, isOpen, onToggle }) => {
   );
 };
 
-export default Sidebar
+export default Sidebar;
