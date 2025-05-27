@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Calendar, Download } from 'lucide-react';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 
 interface ClassSchedule {
   id: string;
@@ -14,6 +16,7 @@ interface ClassSchedule {
 const Schedule: React.FC = () => {
   const [currentDate] = useState(new Date());
   const [view] = useState<'week' | 'month'>('week');
+  const scheduleRef = useRef<HTMLDivElement>(null);
 
   // Mock data - replace with actual API calls
   const mockSchedule: ClassSchedule[] = [
@@ -59,14 +62,28 @@ const Schedule: React.FC = () => {
     return day === currentDay && time === currentTime.slice(0, 2) + ':00';
   };
 
-  const handleExportPDF = () => {
-    // Implement PDF export logic
-    console.log('Exporting PDF...');
+  const handleExportPDF = async () => {
+    if (!scheduleRef.current) return;
+
+    try {
+      const canvas = await html2canvas(scheduleRef.current);
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF({
+        orientation: 'landscape',
+        unit: 'px',
+        format: [canvas.width, canvas.height]
+      });
+
+      pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
+      pdf.save('schedule.pdf');
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+    }
   };
 
   return (
     <div className="p-6 md:p-8">
-      <div className="bg-white rounded-xl shadow-sm p-6">
+      <div className="bg-white rounded-xl shadow-sm p-6" ref={scheduleRef}>
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-xl font-semibold flex items-center">
             <Calendar className="w-6 h-6 mr-2 text-[#7494ec]" />
