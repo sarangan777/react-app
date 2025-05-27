@@ -49,14 +49,12 @@ const PrivateRoute = ({ allowedRoles }: PrivateRouteProps) => {
     <div className="flex h-screen bg-gray-50">
       <Sidebar isMobile={isMobile} isOpen={sidebarOpen} onToggle={toggleSidebar} />
       
-      <div className={`flex-1 flex flex-col transition-all duration-300 ${
-        sidebarOpen ? 'md:ml-64' : 'md:ml-0'
+      <div className={`flex-1 flex flex-col transition-all duration-300 ease-in-out ${
+        sidebarOpen ? 'md:ml-64' : ''
       }`}>
         <TopHeader sidebarOpen={sidebarOpen} onToggleSidebar={toggleSidebar} />
         
-        <main className={`flex-1 overflow-y-auto pt-20 transition-all duration-300 ${
-          sidebarOpen ? 'md:pl-64' : 'md:pl-0'
-        }`}>
+        <main className="flex-1 overflow-y-auto pt-20">
           <Outlet />
         </main>
       </div>
