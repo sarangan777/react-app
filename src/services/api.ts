@@ -28,7 +28,6 @@ const mockUsers = {
     role: 'admin',
     department: 'Administration',
     profilePicture: null,
-    bio: 'System Administrator',
     joinDate: '2024-01-01'
   },
   user: {
@@ -39,7 +38,6 @@ const mockUsers = {
     role: 'user',
     department: 'Engineering',
     profilePicture: null,
-    bio: 'Software Engineer',
     joinDate: '2024-02-01'
   }
 };
@@ -214,6 +212,28 @@ export const uploadProfilePicture = async (file: File): Promise<ApiResponse<{ ur
   return {
     success: true,
     data: { url: URL.createObjectURL(file) }
+  };
+};
+
+export const changePassword = async (currentPassword: string, newPassword: string): Promise<ApiResponse<void>> => {
+  const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+  const userType = currentUser.role === 'admin' ? 'admin' : 'user';
+  
+  if (currentPassword !== mockUsers[userType as keyof typeof mockUsers].password) {
+    return {
+      success: false,
+      data: null,
+      message: 'Current password is incorrect'
+    };
+  }
+
+  // In a real application, you would hash the password and update it in the database
+  mockUsers[userType as keyof typeof mockUsers].password = newPassword;
+
+  return {
+    success: true,
+    data: null,
+    message: 'Password changed successfully'
   };
 };
 

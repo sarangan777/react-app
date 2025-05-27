@@ -5,7 +5,6 @@ export interface User {
   role: string;
   department: string;
   profilePicture: string | null;
-  bio: string | null;
   joinDate: string;
 }
 
@@ -35,6 +34,6 @@ export interface LeaveRequest {
 
 export interface ApiResponse<T> {
   success: boolean;
-  data: T;
+  data: T | null;
   message?: string;
 }
