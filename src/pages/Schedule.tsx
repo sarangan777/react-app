@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { Calendar, Download } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import BackButton from '../components/BackButton';
 
 interface ClassSchedule {
   id: string;
@@ -83,6 +84,9 @@ const Schedule: React.FC = () => {
 
   return (
     <div className="p-6 md:p-8">
+      <div className="mb-4">
+        <BackButton />
+      </div>
       <div className="bg-white rounded-xl shadow-sm p-6" ref={scheduleRef}>
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-xl font-semibold flex items-center">

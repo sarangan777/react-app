@@ -6,6 +6,7 @@ import { Camera, Save, X, Lock } from 'lucide-react';
 import { Dialog } from '@headlessui/react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import BackButton from '../components/BackButton';
 
 const Profile: React.FC = () => {
   const { user: authUser, login } = useAuth();
@@ -128,6 +129,9 @@ const Profile: React.FC = () => {
 
   return (
     <div className="p-6">
+      <div className="mb-4">
+        <BackButton />
+      </div>
       <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-sm">
         <div className="p-6">
           <div className="flex justify-between items-center mb-6">
