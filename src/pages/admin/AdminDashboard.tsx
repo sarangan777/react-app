@@ -59,11 +59,11 @@ const AdminDashboard = () => {
   };
 
   const departmentData = {
-    labels: ['NDIT', 'NDA', 'NDE'],
+    labels: ['HNDIT', 'HNDA', 'HNDE', 'HNDM'],
     datasets: [
       {
         label: 'Attendance Rate (%)',
-        data: [95, 92, 88],
+        data: [95, 92, 88, 90],
         borderColor: 'rgb(75, 192, 192)',
         tension: 0.1
       }
@@ -71,14 +71,13 @@ const AdminDashboard = () => {
   };
 
   const courseData = {
-    labels: ['Morning', 'Evening', 'Weekend'],
+    labels: ['Full Time', 'Part Time'],
     datasets: [
       {
-        data: [14, 6, 4],
+        data: [16, 8],
         backgroundColor: [
           'rgba(255, 99, 132, 0.8)',
-          'rgba(54, 162, 235, 0.8)',
-          'rgba(255, 206, 86, 0.8)'
+          'rgba(54, 162, 235, 0.8)'
         ]
       }
     ]
@@ -167,7 +166,7 @@ const AdminDashboard = () => {
             <tbody className="bg-white divide-y divide-gray-200">
               <tr>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">09:00 - 11:00</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Advanced Java</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">HNDIT</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Mr. Rajkumar</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Lab 01</td>
                 <td className="px-6 py-4 whitespace-nowrap">
@@ -178,7 +177,7 @@ const AdminDashboard = () => {
               </tr>
               <tr>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">11:00 - 13:00</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Web Development</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">HNDA</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Mrs. Priya</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Lab 02</td>
                 <td className="px-6 py-4 whitespace-nowrap">
