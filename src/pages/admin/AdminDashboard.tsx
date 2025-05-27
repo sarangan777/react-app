@@ -12,8 +12,6 @@ import {
   Tooltip,
   Legend
 } from 'chart.js';
-import TopHeader from '../../components/TopHeader';
-import Sidebar from '../../components/Sidebar';
 import StatCard from '../../components/StatCard';
 import * as apiService from '../../services/api';
 
@@ -36,20 +34,9 @@ const AdminDashboard = () => {
     totalCourses: 0
   });
   const [isLoading, setIsLoading] = useState(true);
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-  const [sidebarOpen, setSidebarOpen] = useState(!isMobile);
 
   useEffect(() => {
     fetchDashboardData();
-    
-    const handleResize = () => {
-      const mobile = window.innerWidth < 768;
-      setIsMobile(mobile);
-      setSidebarOpen(!mobile);
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   const fetchDashboardData = async () => {
@@ -69,10 +56,6 @@ const AdminDashboard = () => {
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const handleToggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen);
   };
 
   const departmentData = {
@@ -110,112 +93,103 @@ const AdminDashboard = () => {
   }
 
   return (
-    <div className="flex h-screen bg-gray-50">
-      <Sidebar isMobile={isMobile} isOpen={sidebarOpen} onToggle={handleToggleSidebar} />
-      <div className={`flex-1 flex flex-col overflow-hidden transition-all duration-300 ${
-        sidebarOpen ? 'md:ml-64' : ''
-      }`}>
-        <TopHeader sidebarOpen={sidebarOpen} onToggleSidebar={handleToggleSidebar} />
-        
-        <main className="flex-1 overflow-y-auto p-6 pt-20">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <StatCard
-              title="Total Students"
-              value={stats.totalStudents}
-              icon={<Users className="w-6 h-6 text-blue-600" />}
-              bgColor="bg-white"
-              textColor="text-gray-800"
-            />
-            <StatCard
-              title="Present Today"
-              value={stats.presentToday}
-              icon={<Clock className="w-6 h-6 text-green-600" />}
-              bgColor="bg-white"
-              textColor="text-gray-800"
-            />
-            <StatCard
-              title="Attendance Rate"
-              value={`${stats.attendanceRate}%`}
-              icon={<FileText className="w-6 h-6 text-purple-600" />}
-              bgColor="bg-white"
-              textColor="text-gray-800"
-            />
-            <StatCard
-              title="Total Courses"
-              value={stats.totalCourses}
-              icon={<Calendar className="w-6 h-6 text-orange-600" />}
-              bgColor="bg-white"
-              textColor="text-gray-800"
-            />
-          </div>
+    <div className="p-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <StatCard
+          title="Total Students"
+          value={stats.totalStudents}
+          icon={<Users className="w-6 h-6 text-blue-600" />}
+          bgColor="bg-white"
+          textColor="text-gray-800"
+        />
+        <StatCard
+          title="Present Today"
+          value={stats.presentToday}
+          icon={<Clock className="w-6 h-6 text-green-600" />}
+          bgColor="bg-white"
+          textColor="text-gray-800"
+        />
+        <StatCard
+          title="Attendance Rate"
+          value={`${stats.attendanceRate}%`}
+          icon={<FileText className="w-6 h-6 text-purple-600" />}
+          bgColor="bg-white"
+          textColor="text-gray-800"
+        />
+        <StatCard
+          title="Total Courses"
+          value={stats.totalCourses}
+          icon={<Calendar className="w-6 h-6 text-orange-600" />}
+          bgColor="bg-white"
+          textColor="text-gray-800"
+        />
+      </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-            <div className="bg-white rounded-lg shadow p-6">
-              <h2 className="text-lg font-semibold text-gray-800 mb-4">Attendance by Department</h2>
-              <div className="h-[300px]">
-                <Line data={departmentData} options={{ maintainAspectRatio: false }} />
-              </div>
-            </div>
-
-            <div className="bg-white rounded-lg shadow p-6">
-              <h2 className="text-lg font-semibold text-gray-800 mb-4">Course Distribution</h2>
-              <div className="h-[300px]">
-                <Pie data={courseData} options={{ maintainAspectRatio: false }} />
-              </div>
-            </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <div className="bg-white rounded-lg shadow p-6">
+          <h2 className="text-lg font-semibold text-gray-800 mb-4">Attendance by Department</h2>
+          <div className="h-[300px]">
+            <Line data={departmentData} options={{ maintainAspectRatio: false }} />
           </div>
+        </div>
 
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">Today's Schedule Overview</h2>
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Time
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Course
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Lecturer
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Room
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Status
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  <tr>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">09:00 - 11:00</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Advanced Java</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Mr. Rajkumar</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Lab 01</td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                        In Progress
-                      </span>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">11:00 - 13:00</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Web Development</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Mrs. Priya</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Lab 02</td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                        Upcoming
-                      </span>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+        <div className="bg-white rounded-lg shadow p-6">
+          <h2 className="text-lg font-semibold text-gray-800 mb-4">Course Distribution</h2>
+          <div className="h-[300px]">
+            <Pie data={courseData} options={{ maintainAspectRatio: false }} />
           </div>
-        </main>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-lg shadow p-6">
+        <h2 className="text-lg font-semibold text-gray-800 mb-4">Today's Schedule Overview</h2>
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Time
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Course
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Lecturer
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Room
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Status
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              <tr>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">09:00 - 11:00</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Advanced Java</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Mr. Rajkumar</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Lab 01</td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                    In Progress
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">11:00 - 13:00</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Web Development</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Mrs. Priya</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Lab 02</td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                    Upcoming
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
