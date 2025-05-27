@@ -1,14 +1,31 @@
 import React, { useState, useEffect } from 'react';
-import { Doughnut } from 'react-chartjs-2';
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
-import { UserCheck, UserX, Calendar, Clock } from 'lucide-react';
+import { Line } from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+} from 'chart.js';
+import { Trophy, Target, Clock, Calendar } from 'lucide-react';
 import StatCard from '../components/StatCard';
 import ActivityFeed from '../components/ActivityFeed';
 import { DashboardStats, ActivityItem } from '../types';
 import * as apiService from '../services/api';
 
 // Register Chart.js components
-ChartJS.register(ArcElement, Tooltip, Legend);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 const Dashboard: React.FC = () => {
   const [stats, setStats] = useState<DashboardStats>({
@@ -47,37 +64,53 @@ const Dashboard: React.FC = () => {
     fetchDashboardData();
   }, []);
 
-  // Chart data
+  // Calculate attendance percentage
+  const attendancePercentage = Math.round(
+    (stats.present / (stats.present + stats.absent + stats.leave)) * 100
+  );
+
+  // Weekly attendance data
   const chartData = {
-    labels: ['Present', 'Absent', 'Leave'],
+    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
     datasets: [
       {
-        data: [stats.present, stats.absent, stats.leave],
-        backgroundColor: ['#4ade80', '#f87171', '#facc15'],
-        borderColor: ['#22c55e', '#ef4444', '#eab308'],
-        borderWidth: 1,
-      },
-    ],
+        label: 'Attendance',
+        data: [1, 1, 1, 0, 1, 1, 1], // 1 for present, 0 for absent
+        borderColor: '#7494ec',
+        backgroundColor: 'rgba(116, 148, 236, 0.1)',
+        tension: 0.4,
+        fill: true,
+      }
+    ]
   };
 
-  // Chart options
   const chartOptions = {
+    responsive: true,
     plugins: {
       legend: {
-        position: 'bottom' as const,
-        labels: {
-          padding: 20,
-          usePointStyle: true,
-          pointStyle: 'circle',
+        display: false,
+      },
+      title: {
+        display: true,
+        text: 'Weekly Attendance Pattern',
+        font: {
+          size: 16,
+          weight: 'bold' as const,
+        },
+        padding: 20,
+      },
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        max: 1,
+        ticks: {
+          callback: (value: number) => value === 1 ? 'Present' : 'Absent',
         },
       },
     },
-    cutout: '70%',
-    responsive: true,
-    maintainAspectRatio: false,
   };
 
-  // Loading state
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -86,7 +119,6 @@ const Dashboard: React.FC = () => {
     );
   }
 
-  // Error state
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center h-screen">
@@ -109,44 +141,64 @@ const Dashboard: React.FC = () => {
     <div className="p-6 md:p-8">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard
-          title="Present"
-          value={stats.present}
-          icon={<UserCheck size={24} />}
+          title="Attendance Streak"
+          value="5 Days"
+          icon={<Trophy size={24} />}
           bgColor="bg-green-500"
           textColor="text-white"
         />
         <StatCard
-          title="Absent"
-          value={stats.absent}
-          icon={<UserX size={24} />}
-          bgColor="bg-red-500"
+          title="Attendance Goal"
+          value={`${attendancePercentage}%`}
+          icon={<Target size={24} />}
+          bgColor={attendancePercentage >= 80 ? 'bg-blue-500' : 'bg-yellow-500'}
           textColor="text-white"
         />
         <StatCard
-          title="On Leave"
-          value={stats.leave}
-          icon={<Calendar size={24} />}
-          bgColor="bg-yellow-500"
-          textColor="text-white"
-        />
-        <StatCard
-          title="Total Hours"
-          value={`${stats.totalHours}h`}
+          title="Next Class"
+          value="In 2 Hours"
           icon={<Clock size={24} />}
-          bgColor="bg-blue-500"
+          bgColor="bg-purple-500"
+          textColor="text-white"
+        />
+        <StatCard
+          title="Next Holiday"
+          value="May 30"
+          icon={<Calendar size={24} />}
+          bgColor="bg-orange-500"
           textColor="text-white"
         />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8">
         <div className="lg:col-span-2 bg-white rounded-xl shadow-sm p-6">
-          <h3 className="text-lg font-semibold mb-6">Attendance Overview</h3>
-          <div className="h-[300px] flex items-center justify-center">
-            <Doughnut data={chartData} options={chartOptions} />
+          <div className="h-[300px]">
+            <Line data={chartData} options={chartOptions} />
+          </div>
+          
+          <div className="mt-4 flex justify-between items-center">
+            <div className="text-sm text-gray-500">
+              Required Attendance: <span className="font-semibold text-gray-700">80%</span>
+            </div>
+            <button className="text-[#7494ec] hover:text-[#5b7cde] font-medium">
+              View Full Report →
+            </button>
           </div>
         </div>
         
         <div className="lg:col-span-1">
+          <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
+            <h3 className="text-lg font-semibold mb-4">Quick Actions</h3>
+            <div className="space-y-3">
+              <button className="w-full py-2 px-4 bg-[#7494ec] text-white rounded-lg hover:bg-[#5b7cde] transition-colors">
+                Request Leave
+              </button>
+              <button className="w-full py-2 px-4 border border-[#7494ec] text-[#7494ec] rounded-lg hover:bg-gray-50 transition-colors">
+                View Schedule
+              </button>
+            </div>
+          </div>
+          
           <ActivityFeed activities={activities} />
         </div>
       </div>
