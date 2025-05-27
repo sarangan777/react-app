@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, Lock } from 'lucide-react';
+import { User, Lock, Upload } from 'lucide-react';
 import { Dialog } from '@headlessui/react';
 import { useAuth } from '../../context/AuthContext';
 import { toast, ToastContainer } from 'react-toastify';
@@ -18,6 +18,8 @@ const AdminProfile = () => {
     newPassword: '',
     confirmPassword: '',
   });
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -35,10 +37,35 @@ const AdminProfile = () => {
     }));
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setImageFile(file);
+      
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await apiService.updateUserProfile(formData);
+      let profilePictureUrl = user?.profilePicture || null;
+      
+      if (imageFile) {
+        const uploadResponse = await apiService.uploadProfilePicture(imageFile);
+        if (uploadResponse.success && uploadResponse.data) {
+          profilePictureUrl = uploadResponse.data.url;
+        }
+      }
+      
+      const response = await apiService.updateUserProfile({
+        ...formData,
+        profilePicture: profilePictureUrl,
+      });
       
       if (response.success && response.data) {
         toast.success('Profile updated successfully');
@@ -49,15 +76,11 @@ const AdminProfile = () => {
             ...user,
             ...response.data,
           };
-          localStorage.setItem('user', JSON.stringify(updatedUser));
           login(updatedUser, localStorage.getItem('authToken') || '');
         }
-      } else {
-        toast.error(response.message || 'Failed to update profile');
       }
     } catch (err) {
-      console.error('Error updating profile:', err);
-      toast.error('Failed to update profile. Please try again later.');
+      toast.error('Failed to update profile');
     }
   };
 
@@ -83,19 +106,14 @@ const AdminProfile = () => {
           newPassword: '',
           confirmPassword: '',
         });
-      } else {
-        toast.error(response.message || 'Failed to change password');
       }
     } catch (err) {
-      console.error('Error changing password:', err);
-      toast.error('Failed to change password. Please try again later.');
+      toast.error('Failed to change password');
     }
   };
 
   return (
     <div className="p-6">
-      <ToastContainer position="top-right" autoClose={3000} />
-      
       <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-sm">
         <div className="p-6">
           <div className="flex justify-between items-center mb-6">
@@ -108,6 +126,34 @@ const AdminProfile = () => {
                 Edit Profile
               </button>
             )}
+          </div>
+
+          <div className="flex flex-col items-center mb-8">
+            <div className="relative">
+              <div className="w-32 h-32 rounded-full bg-blue-600 flex items-center justify-center text-white text-5xl font-semibold overflow-hidden">
+                {(imagePreview || user?.profilePicture) ? (
+                  <img 
+                    src={imagePreview || user?.profilePicture || ''} 
+                    alt={user?.name} 
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  user?.name?.charAt(0) || 'A'
+                )}
+                
+                {isEditing && (
+                  <label className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center cursor-pointer transition-opacity hover:bg-opacity-60">
+                    <Upload size={24} className="text-white" />
+                    <input 
+                      type="file" 
+                      className="hidden" 
+                      accept="image/*"
+                      onChange={handleFileChange}
+                    />
+                  </label>
+                )}
+              </div>
+            </div>
           </div>
 
           {isEditing ? (
@@ -126,35 +172,39 @@ const AdminProfile = () => {
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Email
-                </label>
-                <input
-                  type="email"
-                  value={user?.email || ''}
-                  className="w-full p-3 border border-gray-200 rounded-lg bg-gray-50"
-                  disabled
-                />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    value={user?.email || ''}
+                    className="w-full p-3 border border-gray-200 rounded-lg bg-gray-50 text-gray-500 cursor-not-allowed"
+                    disabled
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Admin Level
+                  </label>
+                  <input
+                    type="text"
+                    value={user?.adminLevel === 'super' ? 'Super Admin' : 'Regular Admin'}
+                    className="w-full p-3 border border-gray-200 rounded-lg bg-gray-50 text-gray-500 cursor-not-allowed"
+                    disabled
+                  />
+                </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Role
-                </label>
-                <input
-                  type="text"
-                  value="Admin"
-                  className="w-full p-3 border border-gray-200 rounded-lg bg-gray-50"
-                  disabled
-                />
-              </div>
-
-              <div className="flex justify-end space-x-4">
+              <div className="flex justify-end space-x-4 pt-6">
                 <button
                   type="button"
                   onClick={() => {
                     setIsEditing(false);
+                    setImageFile(null);
+                    setImagePreview(null);
                     setFormData({ name: user?.name || '' });
                   }}
                   className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
@@ -171,30 +221,40 @@ const AdminProfile = () => {
             </form>
           ) : (
             <div className="space-y-6">
-              <div>
-                <h3 className="text-sm font-medium text-gray-500">Full Name</h3>
-                <p className="mt-1 text-lg text-gray-900">{user?.name}</p>
-              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500">Full Name</h3>
+                  <p className="mt-1 text-lg text-gray-900">{user?.name}</p>
+                </div>
 
-              <div>
-                <h3 className="text-sm font-medium text-gray-500">Email</h3>
-                <p className="mt-1 text-lg text-gray-900">{user?.email}</p>
-              </div>
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500">Email</h3>
+                  <p className="mt-1 text-lg text-gray-900">{user?.email}</p>
+                </div>
 
-              <div>
-                <h3 className="text-sm font-medium text-gray-500">Role</h3>
-                <p className="mt-1 text-lg text-gray-900">Admin</p>
-              </div>
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500">Admin Level</h3>
+                  <p className="mt-1 text-lg text-gray-900">
+                    {user?.adminLevel === 'super' ? 'Super Admin' : 'Regular Admin'}
+                  </p>
+                </div>
 
-              <div>
-                <h3 className="text-sm font-medium text-gray-500">Department</h3>
-                <p className="mt-1 text-lg text-gray-900">Administration</p>
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500">Joined</h3>
+                  <p className="mt-1 text-lg text-gray-900">
+                    {user?.joinDate ? new Date(user.joinDate).toLocaleDateString('en-US', { 
+                      year: 'numeric', 
+                      month: 'long', 
+                      day: 'numeric' 
+                    }) : 'Not specified'}
+                  </p>
+                </div>
               </div>
 
               <div className="pt-6">
                 <button
                   onClick={() => setIsPasswordModalOpen(true)}
-                  className="flex items-center px-4 py-2 text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50"
+                  className="flex items-center px-4 py-2 text-blue-600 border border-blue-600 rounded-lg hover:bg-gray-50"
                 >
                   <Lock className="w-4 h-4 mr-2" />
                   Change Password
@@ -281,6 +341,8 @@ const AdminProfile = () => {
           </div>
         </div>
       </Dialog>
+
+      <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );
 };

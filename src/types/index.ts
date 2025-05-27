@@ -6,6 +6,8 @@ export interface User {
   department: string;
   profilePicture: string | null;
   joinDate: string;
+  registrationNumber?: string;
+  adminLevel?: 'super' | 'regular';
 }
 
 export interface DashboardStats {
