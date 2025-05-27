@@ -1,16 +1,16 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Bell } from 'lucide-react';
+import { Bell, Menu } from 'lucide-react';
 
 interface TopHeaderProps {
   sidebarOpen: boolean;
+  onToggleSidebar: () => void;
 }
 
-const TopHeader: React.FC<TopHeaderProps> = ({ sidebarOpen }) => {
+const TopHeader: React.FC<TopHeaderProps> = ({ sidebarOpen, onToggleSidebar }) => {
   const { user } = useAuth();
   const firstName = user?.name?.split(' ')[0] || 'User';
 
-  // Get current day and time
   const today = new Date();
   const options: Intl.DateTimeFormatOptions = { 
     weekday: 'long', 
@@ -22,8 +22,15 @@ const TopHeader: React.FC<TopHeaderProps> = ({ sidebarOpen }) => {
 
   return (
     <header className={`fixed top-0 right-0 z-30 h-20 bg-white shadow-sm transition-all duration-300 ease-in-out ${
-      sidebarOpen ? 'md:left-64' : 'md:left-20'
+      sidebarOpen ? 'md:left-64' : 'left-0'
     } left-0 flex items-center px-6`}>
+      <button
+        className="md:hidden mr-4 p-2 rounded-lg hover:bg-gray-100"
+        onClick={onToggleSidebar}
+      >
+        <Menu size={24} />
+      </button>
+      
       <div className="flex-1">
         <div className="flex flex-col">
           <h2 className="text-2xl font-semibold text-gray-800">Welcome, {firstName}</h2>

@@ -41,16 +41,22 @@ const PrivateRoute = ({ allowedRoles }: PrivateRouteProps) => {
     return <Navigate to={user.role === 'admin' ? '/admin/dashboard' : '/dashboard'} replace />;
   }
 
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
+
   return (
     <div className="flex h-screen bg-gray-50">
-      <Sidebar isMobile={isMobile} />
+      <Sidebar isMobile={isMobile} isOpen={sidebarOpen} onToggle={toggleSidebar} />
       
       <div className={`flex-1 flex flex-col transition-all duration-300 ${
-        sidebarOpen ? 'md:ml-64' : 'md:ml-20'
+        sidebarOpen ? 'md:ml-64' : 'md:ml-0'
       }`}>
-        <TopHeader sidebarOpen={sidebarOpen} />
+        <TopHeader sidebarOpen={sidebarOpen} onToggleSidebar={toggleSidebar} />
         
-        <main className="flex-1 overflow-y-auto pt-20">
+        <main className={`flex-1 overflow-y-auto pt-20 transition-all duration-300 ${
+          sidebarOpen ? 'md:pl-64' : 'md:pl-0'
+        }`}>
           <Outlet />
         </main>
       </div>

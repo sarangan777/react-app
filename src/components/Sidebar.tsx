@@ -1,20 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Calendar, User, Settings, LogOut, Menu, X, Users, FileText } from 'lucide-react';
+import { LayoutDashboard, Calendar, User, LogOut, Menu, X, Users, FileText } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import * as apiService from '../services/api';
 
 interface SidebarProps {
   isMobile: boolean;
+  isOpen: boolean;
+  onToggle: () => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ isMobile }) => {
-  const [isOpen, setIsOpen] = useState(!isMobile);
+const Sidebar: React.FC<SidebarProps> = ({ isMobile, isOpen, onToggle }) => {
   const { user, logout } = useAuth();
-
-  useEffect(() => {
-    setIsOpen(!isMobile);
-  }, [isMobile]);
 
   const handleLogout = async () => {
     try {
@@ -26,13 +23,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobile }) => {
     }
   };
 
-  const toggleSidebar = () => {
-    setIsOpen(!isOpen);
-  };
-
   const handleLinkClick = () => {
     if (isMobile) {
-      setIsOpen(false);
+      onToggle();
     }
   };
 
@@ -58,7 +51,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobile }) => {
         className={`fixed top-4 left-4 z-50 p-2 bg-white rounded-full shadow-md transition-transform duration-300 ${
           isOpen ? 'transform translate-x-56' : ''
         }`}
-        onClick={toggleSidebar}
+        onClick={onToggle}
       >
         {isOpen ? <X size={24} /> : <Menu size={24} />}
       </button>
@@ -107,13 +100,13 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobile }) => {
         </div>
       </div>
 
-      {isOpen && (
+      {isOpen && isMobile && (
         <div 
-          className="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden"
-          onClick={toggleSidebar}
+          className="fixed inset-0 bg-black bg-opacity-50 z-30"
+          onClick={onToggle}
         />
       )}
-    </>
+    </div>
   );
 };
 
