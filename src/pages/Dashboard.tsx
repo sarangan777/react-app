@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Line } from 'react-chartjs-2';
+import { useNavigate } from 'react-router-dom';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -28,6 +29,7 @@ ChartJS.register(
 );
 
 const Dashboard: React.FC = () => {
+  const navigate = useNavigate();
   const [stats, setStats] = useState<DashboardStats>({
     present: 0,
     absent: 0,
@@ -180,7 +182,10 @@ const Dashboard: React.FC = () => {
             <div className="text-sm text-gray-500">
               Required Attendance: <span className="font-semibold text-gray-700">80%</span>
             </div>
-            <button className="text-[#7494ec] hover:text-[#5b7cde] font-medium">
+            <button 
+              onClick={() => navigate('/attendance-report')}
+              className="text-[#7494ec] hover:text-[#5b7cde] font-medium"
+            >
               View Full Report →
             </button>
           </div>
@@ -190,8 +195,17 @@ const Dashboard: React.FC = () => {
           <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
             <h3 className="text-lg font-semibold mb-4">Quick Actions</h3>
             <div className="space-y-3">
-              <button className="w-full py-2 px-4 border border-[#7494ec] text-[#7494ec] rounded-lg hover:bg-gray-50 transition-colors">
+              <button 
+                onClick={() => navigate('/schedule')}
+                className="w-full py-2 px-4 border border-[#7494ec] text-[#7494ec] rounded-lg hover:bg-gray-50 transition-colors"
+              >
                 View Schedule
+              </button>
+              <button 
+                onClick={() => navigate('/attendance-report')}
+                className="w-full py-2 px-4 border border-[#7494ec] text-[#7494ec] rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                View Attendance Report
               </button>
             </div>
           </div>

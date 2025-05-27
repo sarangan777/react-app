@@ -33,13 +33,13 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobile, isOpen, onToggle }) => {
     { to: '/admin/dashboard', icon: <LayoutDashboard size={20} />, text: 'Dashboard' },
     { to: '/admin/manage-users', icon: <Users size={20} />, text: 'Manage Users' },
     { to: '/admin/create-user', icon: <User size={20} />, text: 'Add User' },
-    { to: '/admin/leave-review', icon: <Calendar size={20} />, text: 'Leave Requests' },
     { to: '/admin/attendance', icon: <FileText size={20} />, text: 'Attendance' },
   ];
 
   const userLinks = [
     { to: '/dashboard', icon: <LayoutDashboard size={20} />, text: 'Dashboard' },
     { to: '/schedule', icon: <Clock size={20} />, text: 'Schedule' },
+    { to: '/attendance-report', icon: <FileText size={20} />, text: 'Attendance Report' },
     { to: '/profile', icon: <User size={20} />, text: 'Profile' },
   ];
 
@@ -109,5 +109,3 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobile, isOpen, onToggle }) => {
     </>
   );
 };
-
-export default Sidebar;

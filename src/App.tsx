@@ -5,11 +5,11 @@ import PrivateRoute from './routes/PrivateRoute';
 import LoginPage from './pages/LoginPage';
 import Dashboard from './pages/Dashboard';
 import Schedule from './pages/Schedule';
+import AttendanceReport from './pages/AttendanceReport';
 import Profile from './pages/Profile';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import CreateUser from './pages/admin/CreateUser';
 import ManageUsers from './pages/admin/ManageUsers';
-import LeaveReview from './pages/admin/LeaveReview';
 import AttendanceReview from './pages/admin/AttendanceReview';
 
 function App() {
@@ -23,6 +23,7 @@ function App() {
           <Route element={<PrivateRoute allowedRoles={['user']} />}>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/schedule" element={<Schedule />} />
+            <Route path="/attendance-report" element={<AttendanceReport />} />
             <Route path="/profile" element={<Profile />} />
           </Route>
 
@@ -31,7 +32,6 @@ function App() {
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/admin/create-user" element={<CreateUser />} />
             <Route path="/admin/manage-users" element={<ManageUsers />} />
-            <Route path="/admin/leave-review" element={<LeaveReview />} />
             <Route path="/admin/attendance" element={<AttendanceReview />} />
           </Route>
           
