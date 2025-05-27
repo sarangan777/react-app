@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { UserPlus, Upload } from 'lucide-react';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import BackButton from '../../components/BackButton';
 
 const CreateUser = () => {
   const [formData, setFormData] = useState({
@@ -80,6 +81,9 @@ const CreateUser = () => {
 
   return (
     <div className="p-6">
+      <div className="mb-4">
+        <BackButton />
+      </div>
       <div className="max-w-3xl mx-auto bg-white rounded-lg shadow p-6">
         <div className="flex items-center mb-6">
           <UserPlus className="w-6 h-6 text-blue-600 mr-2" />

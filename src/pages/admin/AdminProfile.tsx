@@ -5,6 +5,7 @@ import { useAuth } from '../../context/AuthContext';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import * as apiService from '../../services/api';
+import BackButton from '../../components/BackButton';
 
 const AdminProfile = () => {
   const { user, login } = useAuth();
@@ -114,6 +115,9 @@ const AdminProfile = () => {
 
   return (
     <div className="p-6">
+      <div className="mb-4">
+        <BackButton />
+      </div>
       <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-sm">
         <div className="p-6">
           <div className="flex justify-between items-center mb-6">

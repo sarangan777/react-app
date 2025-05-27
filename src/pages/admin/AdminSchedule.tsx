@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Calendar, Download, Plus, Edit2, Trash2 } from 'lucide-react';
 import { Dialog } from '@headlessui/react';
+import BackButton from '../../components/BackButton';
 
 interface Schedule {
   id: string;
@@ -67,6 +68,9 @@ const AdminSchedule = () => {
 
   return (
     <div className="p-6">
+      <div className="mb-4">
+        <BackButton />
+      </div>
       <div className="bg-white rounded-xl shadow-sm">
         <div className="p-6 border-b border-gray-200">
           <div className="flex items-center justify-between mb-6">
