@@ -11,7 +11,7 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminSchedule from './pages/admin/AdminSchedule';
 import AdminProfile from './pages/admin/AdminProfile';
 import AttendanceReview from './pages/admin/AttendanceReview';
-import CreateUser from './pages/admin/CreateUser';
+import CreateUser from './pages/admin/CreateUser.tsx';
 
 function App() {
   return (
