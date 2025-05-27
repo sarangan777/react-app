@@ -199,5 +199,3 @@ const Schedule: React.FC = () => {
 };
 
 export default Schedule;
-
-export default Schedule
