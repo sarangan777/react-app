@@ -109,3 +109,5 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobile, isOpen, onToggle }) => {
     </>
   );
 };
+
+export default Sidebar
